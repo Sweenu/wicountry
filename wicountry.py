@@ -1,12 +1,14 @@
-import json
-from textwrap import indent
+import yaml
+from textwrap import indent, fill
 
 import click
 from crayons import yellow, cyan, white
 
+initial_indent = 2 * ' '
+second_indent = initial_indent + 4 * ' '
 
-with open('data.json', 'r') as f:
-    data = json.load(f)
+with open('data.yml', 'r') as f:
+    data = yaml.load(f)
 
 @click.command()
 @click.argument('country')
@@ -18,12 +20,14 @@ def main(country, themes):
     print(yellow(f'{country}:', bold=True))
     for theme, values in info.items():
         theme = cyan(theme, always=True)
-        print(indent(cyan(f'{theme}:'), '  '))
+        print(indent(cyan(f'{theme}:'), initial_indent))
         if isinstance(values, dict):
             for key, value in values.items():
-                print(indent(f'{white(key, bold=True)}: {value}', '    '))
+                print(indent(f'{white(key, bold=True)}: {value}', second_indent))
         else:
-            print(indent(values, '    '))
+            for line in values.split('\n'):
+                print(indent(fill(line), second_indent))
+        print('')
 
 
 if __name__ == '__main__':
